@@ -527,23 +527,6 @@ footer {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
-.toast {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--fg);
-  color: var(--bg);
-  padding: 12px 24px;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 200;
-  opacity: 0;
-  transition: opacity .3s ease, transform .3s ease;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 .hero-entrance { opacity: 0; transform: translateY(16px); }
 .hero-entrance.in { opacity: 1; transform: translateY(0); transition: opacity .6s ease, transform .6s ease; }
@@ -729,7 +712,6 @@ footer {
   </div>
 </section>
 
-<div class="toast" id="toast"></div>
 <footer>
   <span>&copy; 2026 Pramish Maharjan</span>
   <span data-i18n="footer.tag">Built with data, not templates</span>
@@ -771,8 +753,7 @@ var I18N_DATA = {
     'form.message': 'Message',
     'form.messagePlaceholder': 'What would you like to discuss?',
     'form.send': 'Send message',
-    'footer.tag': 'Built with data, not templates',
-    'toast.cv': 'CV coming soon — ask me directly'
+    'footer.tag': 'Built with data, not templates'
   },
   fr: {
     'nav.about': 'À propos',
@@ -808,8 +789,7 @@ var I18N_DATA = {
     'form.message': 'Message',
     'form.messagePlaceholder': 'De quoi souhaitez-vous discuter ?',
     'form.send': 'Envoyer',
-    'footer.tag': 'Conçu avec des données, pas des modèles',
-    'toast.cv': 'CV bientôt disponible — demandez-moi directement'
+    'footer.tag': 'Conçu avec des données, pas des modèles'
   }
 };
 
@@ -1320,16 +1300,17 @@ var I18N_SKILLS = {
     }
   });
 
-  // ── CV button toast ──
+  // ── CV button download ──
   var cvBtn = document.getElementById('cvBtn');
-  var toast = document.getElementById('toast');
-  if (cvBtn && toast) {
+  if (cvBtn) {
     cvBtn.addEventListener('click', function() {
-      var t = I18N_DATA[currentLang] || I18N_DATA.en;
-      toast.textContent = t['toast.cv'] || 'CV coming soon — ask me directly';
-      toast.classList.add('show');
-      clearTimeout(cvBtn._t);
-      cvBtn._t = setTimeout(function() { toast.classList.remove('show'); }, 3000);
+      var file = currentLang === 'fr'
+        ? 'mq6mcs2h-Pramish-MAHARJAN-CV-FR.pdf'
+        : 'mq6mcs24-Pramish-MAHARJAN-CV-EN.pdf';
+      var a = document.createElement('a');
+      a.href = file;
+      a.download = 'Pramish-Maharjan-CV-' + currentLang.toUpperCase() + '.pdf';
+      a.click();
     });
   }
 
