@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pramish Maharjan — Data Analyst & Analytics Engineer</title>
+<script src="three.min.js"></script>
+<style>
+:root {
+  --bg:      #fff;
+  --surface: #fff;
+  --fg:      oklch(18% 0.012 250);
+  --muted:   oklch(48% 0.01 250);
+  --border:  oklch(92% 0.005 250);
+  --accent:  oklch(55% 0.13 165);
+  --accent-soft: oklch(55% 0.13 165 / 0.08);
+  --glass: rgba(255, 255, 255, 0.7);
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --space: clamp(24px, 5vw, 64px);
+  --radius: 8px;
+  --nav-h: 56px;
+}
+.dark {
+  --bg:      oklch(12% 0.008 250);
+  --surface: oklch(16% 0.01 250);
+  --fg:      oklch(92% 0.005 250);
+  --muted:   oklch(60% 0.008 250);
+  --border:  oklch(24% 0.01 250);
+  --accent:  oklch(62% 0.14 165);
+  --accent-soft: oklch(62% 0.14 165 / 0.15);
+  --glass: rgba(0, 0, 0, 0.75);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s ease, color .3s ease;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-h);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(16px, 4vw, 48px);
+  transition: background .3s, border-color .3s;
+}
+.nav-links {
+  display: flex;
+  gap: clamp(12px, 2vw, 28px);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.nav-links a {
+  color: var(--muted);
+  transition: color .2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  transition: width .3s cubic-bezier(.25,.46,.45,.94);
+}
+.nav-links a:hover { color: var(--fg); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { width: 100%; }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.lang-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 6px 10px;
+  transition: background .2s, color .2s;
+  line-height: 1;
+}
+.lang-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+.lang-btn:not(.active):hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  transition: background .2s, color .2s;
+}
+.theme-toggle:hover { background: var(--border); color: var(--fg); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 36px; height: 36px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 8px;
+  transition: background .2s;
+}
+.hamburger:hover { background: var(--border); }
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--fg);
+  border-radius: 1px;
+  transition: transform .3s, opacity .3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 99;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.mobile-nav.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-nav a {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color .2s;
+}
+.mobile-nav a:hover { color: var(--accent); }
+.mobile-lang {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.mobile-lang button {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.mobile-lang button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.mobile-lang button:not(.active):hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+section {
+  padding: var(--space) clamp(20px, 6vw, 64px);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+section.hero {
+  padding-top: calc(var(--nav-h) + var(--space) * 2);
+  padding-bottom: calc(var(--space) * 1.5);
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#three-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+#three-bg canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0.6;
+}
+.hero > * { position: relative; z-index: 1; }
+.hero-tag {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin-bottom: 12px;
+}
+.hero .summary {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 60ch;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+  margin-bottom: 36px;
+  justify-content: center;
+}
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label { font-size: 13px; color: var(--muted); letter-spacing: 0.01em; }
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
+}
+.btn:hover { background: var(--border); transform: translateY(-1px); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: color-mix(in oklch, var(--accent), #000 25%);
+  border-color: color-mix(in oklch, var(--accent), #000 25%);
+}
+.btn-outline {
+  background: transparent;
+  border-color: var(--border);
+}
+.btn-outline:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.hero-photo {
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  margin-bottom: 24px;
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 7px var(--accent);
+}
+.hero-photo-wrap { position: relative; display: inline-flex; margin-bottom: 4px; }
+
+.section-label {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-bottom: 24px;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  margin-top: 12px;
+  border-radius: 2px;
+}
+
+.work-list { display: flex; flex-direction: column; gap: 28px; }
+.work-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.work-role {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.work-company { font-size: 16px; color: var(--accent); font-weight: 500; }
+.work-meta { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.work-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.work-card ul li {
+  font-size: 15px;
+  color: var(--muted);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+.work-card ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 9px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: .5;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease, box-shadow .3s ease, border-color .3s ease;
+  transition-delay: calc(var(--reveal-i, 5) * 0.08s);
+}
+.project-card.visible { opacity: 1; transform: translateY(0); }
+.project-card:hover {
+  box-shadow: 0 8px 30px var(--accent-soft);
+  border-color: var(--accent);
+}
+.project-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.project-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.project-card .tags span {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.project-card p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.skill-cat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.skill-cat h3 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.skill-cat .badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-soft); }
+
+.edu-list { display: flex; flex-direction: column; gap: 20px; }
+.edu-item {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.edu-item:last-child { border-bottom: none; }
+.edu-school { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+.edu-degree { font-size: 15px; color: var(--muted); margin-top: 2px; }
+.edu-detail { font-size: 14px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.edu-year { font-size: 14px; color: var(--accent); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+
+.contact-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+.contact-info { display: flex; flex-direction: column; gap: 20px; }
+.contact-info h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+.contact-info p { color: var(--muted); max-width: 45ch; }
+.contact-links { display: flex; flex-direction: column; gap: 12px; }
+.contact-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--muted);
+  transition: color .2s, transform .2s;
+}
+.contact-links a:hover { color: var(--accent); transform: translateX(4px); }
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: flex; flex-direction: column; gap: 6px; }
+.form-row label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+.form-row input,
+.form-row textarea {
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--fg);
+  transition: border-color .2s;
+  outline: none;
+}
+.form-row input:focus,
+.form-row textarea:focus { border-color: var(--accent); }
+.form-row textarea { resize: vertical; min-height: 100px; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px clamp(20px, 6vw, 64px);
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--fg);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.hero-entrance { opacity: 0; transform: translateY(16px); }
+.hero-entrance.in { opacity: 1; transform: translateY(0); transition: opacity .6s ease, transform .6s ease; }
+.hero-entrance.d1 { transition-delay: .1s; }
+.hero-entrance.d2 { transition-delay: .25s; }
+.hero-entrance.d3 { transition-delay: .4s; }
+.hero-entrance.d4 { transition-delay: .55s; }
+.hero-entrance.d5 { transition-delay: .7s; }
+.hero-entrance.d6 { transition-delay: .85s; }
+.hero-entrance.d7 { transition-delay: 1s; }
+
+.typewriter::after {
+  content: '|';
+  display: inline-block;
+  animation: cursor-blink .75s step-end infinite;
+  color: var(--accent);
+  font-weight: 300;
+}
+.typewriter.done::after { display: none; }
+.typewriter-scroll { visibility: hidden; }
+.typewriter-scroll.typing { visibility: visible; }
+.typewriter-scroll.typewriter::after { visibility: visible; }
+.stat-value.counted { font-variant-numeric: tabular-nums; }
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+.work-card { transition: box-shadow .3s ease, border-color .3s ease; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .mobile-nav.open { display: flex; }
+  .hero-stats { gap: 16px 32px; }
+  .stat-value { font-size: 26px; }
+  .work-header { flex-direction: column; }
+  .project-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .contact-wrap { grid-template-columns: 1fr; }
+  .edu-item { grid-template-columns: 1fr; }
+  .edu-year { text-align: left; }
+}
+@media (max-width: 480px) {
+  section { padding: 24px 16px; }
+  section.hero { padding-top: calc(var(--nav-h) + 32px); }
+  .hero h1 { font-size: 32px; }
+  .hero-photo { width: 260px; height: 260px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  .reveal, .hero-entrance, .work-card, .project-card { opacity: 1; transform: none; transition: none; }
+  .typewriter::after { display: none; }
+  .typewriter-scroll { visibility: visible; }
+  .typewriter-scroll.typewriter::after { display: none; }
+}
+
+/* ── Language toggle ── */
+.lang-btn .flag { font-size: 16px; line-height: 1; }
+.lang-btn .label { font-size: 11px; font-weight: 700; letter-spacing: 0.03em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-links">
+    <a href="#about" data-i18n="nav.about">About</a>
+    <a href="#education" data-i18n="nav.education">Education</a>
+    <a href="#work" data-i18n="nav.work">Work</a>
+    <a href="#projects" data-i18n="nav.projects">Projects</a>
+    <a href="#skills" data-i18n="nav.skills">Skills</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <div class="lang-toggle" role="radiogroup" aria-label="Language">
+      <button class="lang-btn active" data-lang="en" role="radio" aria-checked="true" title="English"><span class="flag">EN</span></button>
+      <button class="lang-btn" data-lang="fr" role="radio" aria-checked="false" title="Français"><span class="flag">FR</span></button>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">&#9681;</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#about" data-i18n="nav.about">About</a>
+  <a href="#education" data-i18n="nav.education">Education</a>
+  <a href="#work" data-i18n="nav.work">Work</a>
+  <a href="#projects" data-i18n="nav.projects">Projects</a>
+  <a href="#skills" data-i18n="nav.skills">Skills</a>
+  <a href="#contact" data-i18n="nav.contact">Contact</a>
+  <div class="mobile-lang">
+    <button class="active" data-lang="en">EN</button>
+    <button data-lang="fr">FR</button>
+  </div>
+</div>
+
+<section class="hero" id="about">
+  <div id="three-bg" aria-hidden="true"></div>
+  <div class="hero-photo-wrap hero-entrance d1">
+    <img src="mpfxmkfc-2112.jpg" alt="Pramish Maharjan" class="hero-photo" />
+  </div>
+  <div class="hero-tag hero-entrance d2" id="heroTag" data-i18n="hero.tag">Data Analyst & Analytics Engineer</div>
+  <h1 class="hero-entrance d3">Pramish Maharjan</h1>
+  <p class="summary hero-entrance d4" id="heroSummary" data-i18n="hero.summary">Data Analyst & Analytics Engineer specializing in Data Automation, Data Pipelines, Agentic AI and RAG Knowledge Systems. Looking for an end-of-studies internship (6 months).</p>
+  <div class="hero-stats hero-entrance d5" id="heroStats">
+    <div class="stat">
+      <span class="stat-value" data-target="270">270+</span>
+      <span class="stat-label" data-i18n="stat1">hours saved / year at Valeo</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" data-target="95">95%</span>
+      <span class="stat-label" data-i18n="stat2">data accuracy at Cloud Factory</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" data-target="92">92%</span>
+      <span class="stat-label" data-i18n="stat3">ML model accuracy at DSTI</span>
+    </div>
+  </div>
+  <div class="hero-cta hero-entrance d6">
+    <button class="btn btn-primary" id="cvBtn"><span data-i18n="hero.cv">Download CV</span></button>
+    <a href="#contact" class="btn btn-outline" data-i18n="hero.contact">Get in touch</a>
+    <a href="#projects" class="btn btn-outline" data-i18n="hero.projects">View projects</a>
+  </div>
+</section>
+
+<section id="education">
+  <div class="section-label" data-i18n="section.education">Education</div>
+  <h2 class="section-title typewriter-scroll" data-i18n="section.education-title">Education</h2>
+  <div class="edu-list" id="eduList"></div>
+</section>
+
+<section id="work">
+  <div class="section-label" data-i18n="section.work">Experience</div>
+  <h2 class="section-title typewriter-scroll" data-i18n="section.work-title">Work</h2>
+  <div class="work-list" id="workList"></div>
+</section>
+
+<section id="projects">
+  <div class="section-label" data-i18n="section.projects">Selected Work</div>
+  <h2 class="section-title typewriter-scroll" data-i18n="section.projects-title">Projects</h2>
+  <div class="project-grid" id="projectGrid"></div>
+</section>
+
+<section id="skills">
+  <div class="section-label" data-i18n="section.skills">Expertise</div>
+  <h2 class="section-title typewriter-scroll" data-i18n="section.skills-title">Skills</h2>
+  <div class="skills-grid" id="skillsGrid"></div>
+</section>
+
+<section id="contact">
+  <div class="section-label" data-i18n="section.contact">Connect</div>
+  <h2 class="section-title typewriter-scroll" data-i18n="section.contact-title">Contact</h2>
+  <div class="contact-wrap">
+    <div class="contact-info reveal">
+      <h3 data-i18n="contact.heading">Let's work together</h3>
+      <p data-i18n="contact.text">Looking for an end-of-studies internship (6 months) in Data Analytics, Analytics Engineering, or AI. Based in Paris, open to remote or hybrid.</p>
+      <div class="contact-links">
+        <a href="mailto:pramishmaharjan@outlook.com">&#9993; pramishmaharjan@outlook.com</a>
+        <a href="tel:+33783392817">&#9742; +33 7 83 39 28 17</a>
+        <a href="https://github.com/pramishmaharjan" target="_blank">&#10548; github.com/pramishmaharjan</a>
+        <a href="https://linkedin.com/in/pramishmaharjan" target="_blank">&#10548; linkedin.com/in/pramishmaharjan</a>
+      </div>
+    </div>
+    <form class="contact-form reveal" id="contactForm">
+      <div class="form-row">
+        <label for="name" data-i18n="form.name">Name</label>
+        <input type="text" id="name" name="name" data-i18n-placeholder="form.namePlaceholder" placeholder="Your name" required />
+      </div>
+      <div class="form-row">
+        <label for="email" data-i18n="form.email">Email</label>
+        <input type="email" id="email" name="email" data-i18n-placeholder="form.emailPlaceholder" placeholder="you@example.com" required />
+      </div>
+      <div class="form-row">
+        <label for="message" data-i18n="form.message">Message</label>
+        <textarea id="message" name="message" data-i18n-placeholder="form.messagePlaceholder" placeholder="What would you like to discuss?" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn"><span data-i18n="form.send">Send message</span></button>
+    </form>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+<footer>
+  <span>&copy; 2026 Pramish Maharjan</span>
+  <span data-i18n="footer.tag">Built with data, not templates</span>
+</footer>
+
+<script>
+var I18N_DATA = {
+  en: {
+    'nav.about': 'About',
+    'nav.education': 'Education',
+    'nav.work': 'Work',
+    'nav.projects': 'Projects',
+    'nav.skills': 'Skills',
+    'nav.contact': 'Contact',
+    'hero.tag': 'Data Analyst & Analytics Engineer',
+    'hero.summary': 'Data Analyst & Analytics Engineer specializing in Data Automation, Data Pipelines, Agentic AI and RAG Knowledge Systems. Looking for an end-of-studies internship (6 months).',
+    'stat1': 'hours saved / year at Valeo',
+    'stat2': 'data accuracy at Cloud Factory',
+    'stat3': 'ML model accuracy at DSTI',
+    'hero.cv': 'Download CV',
+    'hero.contact': 'Get in touch',
+    'hero.projects': 'View projects',
+    'section.education': 'Education',
+    'section.education-title': 'Education',
+    'section.work': 'Experience',
+    'section.work-title': 'Work',
+    'section.projects': 'Selected Work',
+    'section.projects-title': 'Projects',
+    'section.skills': 'Expertise',
+    'section.skills-title': 'Skills',
+    'section.contact': 'Connect',
+    'section.contact-title': 'Contact',
+    'contact.heading': "Let's work together",
+    'contact.text': 'Looking for an end-of-studies internship (6 months) in Data Analytics, Analytics Engineering, or AI. Based in Paris, open to remote or hybrid.',
+    'form.name': 'Name',
+    'form.namePlaceholder': 'Your name',
+    'form.email': 'Email',
+    'form.emailPlaceholder': 'you@example.com',
+    'form.message': 'Message',
+    'form.messagePlaceholder': 'What would you like to discuss?',
+    'form.send': 'Send message',
+    'footer.tag': 'Built with data, not templates',
+    'toast.cv': 'CV coming soon — ask me directly'
+  },
+  fr: {
+    'nav.about': 'À propos',
+    'nav.education': 'Formation',
+    'nav.work': 'Expérience',
+    'nav.projects': 'Projets',
+    'nav.skills': 'Compétences',
+    'nav.contact': 'Contact',
+    'hero.tag': 'Analyste de données & Ingénieur analytique',
+    'hero.summary': 'Analytics Engineer spécialisé en Product Analytics et automatisation. Expert en conception de pipelines de données et intégration d\'IA agentique. Fort d\'une expérience en environnement retail et industriel (Valeo). Recherche d\'un contrat d\'apprentissage ou d\'un stage de fin d\'études (6 mois).',
+    'stat1': 'heures économisées / an chez Valeo',
+    'stat2': 'précision des données chez Cloud Factory',
+    'stat3': 'précision du modèle ML à DSTI',
+    'hero.cv': 'Télécharger le CV',
+    'hero.contact': 'Me contacter',
+    'hero.projects': 'Voir les projets',
+    'section.education': 'Formation',
+    'section.education-title': 'Formation',
+    'section.work': 'Expérience',
+    'section.work-title': 'Expérience',
+    'section.projects': 'Projets',
+    'section.projects-title': 'Projets',
+    'section.skills': 'Compétences',
+    'section.skills-title': 'Compétences',
+    'section.contact': 'Contact',
+    'section.contact-title': 'Contact',
+    'contact.heading': 'Travaillons ensemble',
+    'contact.text': 'À la recherche d\'un stage de fin d\'études (6 mois) en Data Analytics, Analytics Engineering ou IA. Basé à Paris, ouvert au télétravail ou au hybride.',
+    'form.name': 'Nom',
+    'form.namePlaceholder': 'Votre nom',
+    'form.email': 'Email',
+    'form.emailPlaceholder': 'vous@exemple.com',
+    'form.message': 'Message',
+    'form.messagePlaceholder': 'De quoi souhaitez-vous discuter ?',
+    'form.send': 'Envoyer',
+    'footer.tag': 'Conçu avec des données, pas des modèles',
+    'toast.cv': 'CV bientôt disponible — demandez-moi directement'
+  }
+};
+
+var I18N_EDUCATION = {
+  en: [
+    { school: 'DSTI School of Engineering', degree: 'Applied MSc in Data Analytics', detail: 'CRM Data Management, SAS Viya, Predictive Analytics, Machine Learning, Scikit-learn, Data Pipelines.', year: '2024 &ndash; 2026' },
+    { school: 'ESCC Business School', degree: "Bachelor's in Business Administration", detail: 'Human Resources & Operations Management, Economics, Digital Marketing, SEO Strategies.', year: '2021 &ndash; 2024' },
+    { school: 'Tribhuvan University', degree: "Bachelor's in Computer Science and IT", detail: 'Computer Networks & Data Structures.', year: '2018 &ndash; 2021' },
+    { school: 'Coursera', degree: 'IBM Data Analytics', detail: 'Python, SQL, Spreadsheets, Excel, Cognos, RDBMS, Data Processing, and Dashboard.', year: '2024' }
+  ],
+  fr: [
+    { school: "DSTI \u00c9cole d'Ing\u00e9nierie", degree: 'Applied MSc in Data Analytics', detail: 'CRM Data Management, SAS Viya, Predictive Analytics, Machine Learning, Scikit-learn, Data Pipelines.', year: '2024 &ndash; 2026' },
+    { school: "ESCC \u00c9cole de Commerce", degree: 'Licence en Administration des Affaires', detail: 'Gestion des RH et des op\u00e9rations, \u00c9conomie, Marketing digital, Strat\u00e9gies SEO.', year: '2021 &ndash; 2024' },
+    { school: 'Tribhuvan University', degree: 'Licence en Informatique et Technologies de l\'Information', detail: 'R\u00e9seaux informatiques et Structures de donn\u00e9es.', year: '2018 &ndash; 2021' },
+    { school: 'Coursera', degree: 'IBM Data Analytics', detail: 'Python, SQL, Spreadsheets, Excel, Cognos, RDBMS, Notebooks, Dashboard.', year: '2024' }
+  ]
+};
+
+var I18N_WORK = {
+  en: [
+    {
+      role: 'Analytics Engineer (Finance Automation)',
+      company: 'Valeo',
+      meta: '2025 &middot; Cergy, France',
+      items: [
+        'Independently developed and deployed "Jenga" — an automated financial reporting pipeline in Google Apps Script, extracting and processing live financial data.',
+        'Built a custom RAG AI agent (Gemini, Valeo AI) trained on self-produced video tutorials, empowering the team with independent troubleshooting and maintenance.',
+        'Saved over 270 hours per year for the finance controlling team by improving data transparency, scalability, and reliability.',
+        'Standardized reporting across weekly, monthly, quarterly, MTP, and budget cycles with automated summaries.'
+      ]
+    },
+    {
+      role: 'IT Engineer',
+      company: 'Axiom Technologies',
+      meta: '2021 &ndash; 2025 &middot; Paris, France',
+      items: [
+        'Managed critical infrastructure across enterprise data centers (Equinix, HCL, ETIX) for clients including Microsoft, Meta, Orange, and ANZ Bank.',
+        'Improved incident resolution efficiency by 30% and reduced downtime to under 3 minutes per incident.'
+      ]
+    },
+    {
+      role: 'Data Quality Specialist',
+      company: 'Cloud Factory',
+      meta: '2016 &ndash; 2019 &middot; Kathmandu, Nepal',
+      items: [
+        'Achieved up to 95% accuracy in processed and annotated data for AI and machine learning, specializing in bill image and 3D sensor annotations for 70+ clients including Expensify and AMP Robotics.',
+        'Trained new members within one week using Google Sheets and web tools for efficient project handovers.'
+      ]
+    }
+  ],
+  fr: [
+    {
+      role: 'Ing\u00e9nieur analytique (Automatisation financi\u00e8re)',
+      company: 'Valeo',
+      meta: '2025 &middot; Cergy, France',
+      items: [
+        "A d\u00e9velopp\u00e9 et d\u00e9ploy\u00e9 de mani\u00e8re autonome 'Jenga' — une cha\u00eene de reporting financier automatis\u00e9e sous Google Apps Script, extrayant et traitant des donn\u00e9es financi\u00e8res en temps r\u00e9el.",
+        "P\u00e9rennisation du code d'automatisation par le d\u00e9veloppement d'un agent IA RAG personnalis\u00e9 (Gemini, Valeo AI), entra\u00een\u00e9 sur des tutoriels vid\u00e9o auto-produits pour permettre \u00e0 l'\u00e9quipe de r\u00e9soudre et maintenir le syst\u00e8me de mani\u00e8re autonome.",
+        'Permis d\'\u00e9conomiser plus de 270 heures par an au service de contr\u00f4le financier, en am\u00e9liorant la transparence, la scalabilit\u00e9 et la fiabilit\u00e9 des donn\u00e9es.',
+        "Standardis\u00e9 les rapports hebdomadaires, mensuels, trimestriels, MTP et budg\u00e9taires, avec envoi automatique de r\u00e9sum\u00e9s par e-mail."
+      ]
+    },
+    {
+      role: 'Ing\u00e9nieur IT',
+      company: 'Axiom Technologies',
+      meta: '2021 &ndash; 2025 &middot; Paris, France',
+      items: [
+        'Gestion de l\'infrastructure critique dans des data centers (Equinix, HCL, ETIX) pour des clients tels que Microsoft, Meta, Orange et ANZ Bank.',
+        "Am\u00e9lioration de l'efficacit\u00e9 de r\u00e9solution des incidents de 30 % et r\u00e9duction des interruptions \u00e0 moins de 3 minutes par incident."
+      ]
+    },
+    {
+      role: 'Sp\u00e9cialiste donn\u00e9es',
+      company: 'Cloud Factory',
+      meta: '2016 &ndash; 2019 &middot; Katmandou, N\u00e9pal',
+      items: [
+        "Atteinte d'une pr\u00e9cision de 95% sur les donn\u00e9es trait\u00e9es et annot\u00e9es (images de factures, capteurs 3D) pour des projets d'IA et de machine learning, au service de plus de 70 clients, dont Expensify et AMP Robotics.",
+        "Am\u00e9lioration de la pr\u00e9cision de l'\u00e9quipe par la formation des nouvelles recrues en 1 semaine, en s'appuyant sur Google Sheets et des outils web pour des passations de projet efficaces."
+      ]
+    }
+  ]
+};
+
+var I18N_PROJECTS = {
+  en: [
+    {
+      title: 'Surgical Brain OS — LLM Orchestration Framework',
+      tags: ['Python', 'AI', 'Orchestration', 'RAG'],
+      desc: 'Modular data ecosystem acting as a persistent memory layer for LLMs, ensuring consistency and reducing hallucinations across AI tools. Deterministic routing architecture for multi-agent orchestration.',
+      url: 'https://github.com/pramishmaharjan/Deterministic-Framework-for-LLM-Orchestration'
+    },
+    {
+      title: 'Modular Brain: Persistent AI Context & Memory System',
+      tags: ['Python', 'LLM', 'Memory', 'RAG'],
+      desc: 'Built a modular data ecosystem that acts as a persistent memory layer for LLMs, ensuring consistency and reducing hallucinations across various AI tools.',
+      url: 'https://github.com/pramishmaharjan/Deterministic-Framework-for-LLM-Orchestration'
+    },
+    {
+      title: 'Agentic RAG for YouTube Channels',
+      tags: ['Jupyter', 'Ollama', 'RAG', 'Chroma DB'],
+      desc: 'RAG pipeline transforming YouTube channel data into a queryable knowledge base using vector embeddings and Chroma DB. Ingests transcripts, stores them, and answers natural-language questions.',
+      url: 'https://github.com/pramishmaharjan/RAG-model-for-Youtube-channels'
+    },
+    {
+      title: 'Data Warehousing & ETL Power BI Dashboard',
+      tags: ['SSIS', 'SQL Server', 'Power BI', 'Star Schema'],
+      desc: 'End-to-end ETL pipeline analyzing 1M+ calls (857M minutes) across 3 years. Three-layer model (STA &rarr; ODS &rarr; DWH) with Star Schema. Revealed SLA of 88% and Abandon Rate of 0.34%.',
+      url: 'https://github.com/pramishmaharjan/Data-Warehousing'
+    },
+    {
+      title: 'ML Model for Diabetes Diagnosis',
+      tags: ['Python', 'Scikit-learn', 'ML Pipeline', 'Classification'],
+      desc: 'End-to-end ML pipeline using 15,000 patient records, achieving 92% accuracy in predicting diabetes risk. Comprehensive feature engineering and model evaluation.',
+      url: 'https://github.com/pramishmaharjan/Diabetes-ML-model'
+    },
+    {
+      title: 'Historical Stock Data Visualization & Analysis',
+      tags: ['Python', 'yfinance', 'Time Series', 'Visualization'],
+      desc: 'Extracted actionable insights using moving averages on Apple and GameStop stock data. Identified 20% fluctuation patterns during peak trading periods from 5 years of historical data.',
+      url: 'https://github.com/pramishmaharjan'
+    },
+    {
+      title: 'French GDP Time Series Prediction',
+      tags: ['R', 'Time Series', 'Linear Regression', 'Forecasting'],
+      desc: 'Model predicting French GDP growth from 1960 to 2015, achieving an R-squared of 0.89. Analyzed historical economic data to identify key growth patterns, improving trend forecasting accuracy by 25%.',
+      url: 'https://github.com/pramishmaharjan/GDP-linear-regression'
+    },
+    {
+      title: 'Data Pipeline Automation',
+      tags: ['ETL', 'Data Engineering', 'Automation', 'SSIS'],
+      desc: 'Automated data processing pipeline for extracting, transforming, and loading data between heterogeneous systems with built-in monitoring and error handling.',
+      url: 'https://github.com/pramishmaharjan/Data-Pipeline'
+    }
+  ],
+  fr: [
+    {
+      title: 'Surgical Brain OS — Framework d\'orchestration LLM',
+      tags: ['Python', 'IA', 'Orchestration', 'RAG'],
+      desc: 'Écosystème de données modulaire agissant comme une couche mémoire persistante pour les LLM, assurant la cohérence et réduisant les hallucinations entre outils d\'IA. Architecture de routage déterministe pour l\'orchestration multi-agent.',
+      url: 'https://github.com/pramishmaharjan/Deterministic-Framework-for-LLM-Orchestration'
+    },
+    {
+      title: 'Cerveau modulaire : mémoire et contexte d\'IA persistants',
+      tags: ['Python', 'LLM', 'Mémoire', 'RAG'],
+      desc: 'Création d\'un système de mémoire modulaire pour les IA qui garde les informations cohérentes et réduit les erreurs entre outils, agissant comme une couche persistante pour réduire les hallucinations.',
+      url: 'https://github.com/pramishmaharjan/Deterministic-Framework-for-LLM-Orchestration'
+    },
+    {
+      title: 'Système d\'analyse vidéo YouTube RAG basé sur l\'IA',
+      tags: ['Jupyter', 'Ollama', 'RAG', 'Chroma DB'],
+      desc: 'Pipeline RAG transformant les données de chaînes YouTube en une base de connaissances interrogeable via embeddings vectoriels et Chroma DB. Ingestion de transcriptions et问答 en langage naturel.',
+      url: 'https://github.com/pramishmaharjan/RAG-model-for-Youtube-channels'
+    },
+    {
+      title: 'Entreposage de données et ETL — Tableau de bord Power BI',
+      tags: ['SSIS', 'SQL Server', 'Power BI', 'Schéma en étoile'],
+      desc: 'Pipeline ETL de bout en bout analysant 1M+ appels (857M minutes) sur 3 ans. Modèle à trois couches (STA &rarr; ODS &rarr; DWH) avec schéma en étoile. SLA de 88% et taux d\'abandon de 0,34%.',
+      url: 'https://github.com/pramishmaharjan/Data-Warehousing'
+    },
+    {
+      title: 'Modèle ML pour le diagnostic du diabète',
+      tags: ['Python', 'Scikit-learn', 'Pipeline ML', 'Classification'],
+      desc: 'Pipeline ML complet utilisant 15 000 dossiers patients, atteignant 92% de précision dans la prédiction du risque de diabète. Ingénierie des caractéristiques et évaluation de modèles.',
+      url: 'https://github.com/pramishmaharjan/Diabetes-ML-model'
+    },
+    {
+      title: 'Visualisation et analyse des données boursières historiques',
+      tags: ['Python', 'yfinance', 'Séries temporelles', 'Visualisation'],
+      desc: 'Extraction d\'informations exploitables via moyennes mobiles sur les actions Apple et GameStop. Identification de 20% de fluctuations pendant les périodes de trading de pointe sur 5 ans de données.',
+      url: 'https://github.com/pramishmaharjan'
+    },
+    {
+      title: 'Prévision du PIB français par séries temporelles',
+      tags: ['R', 'Séries temporelles', 'Régression linéaire', 'Prévision'],
+      desc: 'Modèle prédisant la croissance du PIB français de 1960 à 2015 avec un R-carré de 0,89. Analyse des données économiques historiques pour identifier les tendances, améliorant la précision de 25%.',
+      url: 'https://github.com/pramishmaharjan/GDP-linear-regression'
+    },
+    {
+      title: 'Automatisation de pipelines de données',
+      tags: ['ETL', 'Data Engineering', 'Automatisation', 'SSIS'],
+      desc: 'Pipeline automatisé d\'extraction, transformation et chargement de données entre systèmes hétérogènes avec surveillance intégrée et gestion des erreurs.',
+      url: 'https://github.com/pramishmaharjan/Data-Pipeline'
+    }
+  ]
+};
+
+var I18N_SKILLS = {
+  en: [
+    { cat: 'Programming & Analytics', badges: ['Python', 'R', 'Pandas', 'NumPy', 'Scikit-learn'] },
+    { cat: 'AI & System Design', badges: ['RAG Pipeline', 'Vector Embeddings', 'Tokenization', 'LLM Integration', 'Agentic AI'] },
+    { cat: 'Databases', badges: ['SQL', 'Graph DB', 'Vector DB', 'Data Modeling', 'Chroma DB'] },
+    { cat: 'Data Engineering', badges: ['SSIS', 'SQL Server', 'Data Warehousing', 'ETL Pipelines'] },
+    { cat: 'Business Intelligence', badges: ['Excel', 'Google Sheets', 'Power BI', 'Tableau', 'Amplitude'] },
+    { cat: 'Certifications', badges: ['IBM Data Analyst', 'Microsoft Power BI', 'Neo4j Professional', 'SAS Viya'] },
+    { cat: 'Languages', badges: ['English C2', 'French B1', 'Nepali Native', 'Hindi B1'] }
+  ],
+  fr: [
+    { cat: 'Programmation & Analyse', badges: ['Python', 'R', 'Pandas', 'NumPy', 'Scikit-learn'] },
+    { cat: 'IA & Conception système', badges: ['Pipeline RAG', 'Vector Embeddings', 'Tokenization', 'Intégration LLM', 'IA Agentique'] },
+    { cat: 'Bases de données', badges: ['SQL', 'Graph DB', 'Vector DB', 'Data Modeling', 'Chroma DB'] },
+    { cat: 'Ingénierie des données', badges: ['SSIS', 'SQL Server', 'Data Warehousing', 'Pipelines ETL'] },
+    { cat: 'Business Intelligence', badges: ['Excel', 'Google Sheets', 'Power BI', 'Tableau', 'Amplitude'] },
+    { cat: 'Certifications', badges: ['IBM Data Analyst', 'Microsoft Power BI', 'Neo4f Professional', 'SAS Viya'] },
+    { cat: 'Langues', badges: ['Anglais C2', 'Français B1', 'Népalais maternel', 'Hindi B1'] }
+  ]
+};
+
+(function(){
+  'use strict';
+
+  var currentLang = localStorage.getItem('portfolio-lang') || 'en';
+
+  // ── Section renderers ──
+  function renderEducation(lang) {
+    var list = document.getElementById('eduList');
+    if (!list) return;
+    var data = I18N_EDUCATION[lang] || I18N_EDUCATION.en;
+    list.innerHTML = data.map(function(e) {
+      return '<div class="edu-item reveal"><div><div class="edu-school">' + e.school + '</div><div class="edu-degree">' + e.degree + '</div><div class="edu-detail">' + e.detail + '</div></div><div class="edu-year">' + e.year + '</div></div>';
+    }).join('');
+  }
+
+  function renderWork(lang) {
+    var list = document.getElementById('workList');
+    if (!list) return;
+    var data = I18N_WORK[lang] || I18N_WORK.en;
+    list.innerHTML = data.map(function(w) {
+      return '<div class="work-card"><div class="work-header"><div><div class="work-role">' + w.role + '</div><div class="work-company">' + w.company + '</div></div><div class="work-meta">' + w.meta + '</div></div><ul>' + w.items.map(function(i) { return '<li>' + i + '</li>'; }).join('') + '</ul></div>';
+    }).join('');
+  }
+
+  function renderProjects(lang) {
+    var grid = document.getElementById('projectGrid');
+    if (!grid) return;
+    var data = I18N_PROJECTS[lang] || I18N_PROJECTS.en;
+    grid.innerHTML = data.map(function(p, i) {
+      return '<a class="project-card" href="' + p.url + '" target="_blank" style="--reveal-i:' + (i + 1) + '"><h3>' + p.title + '</h3><div class="tags">' + p.tags.map(function(t) { return '<span>' + t + '</span>'; }).join('') + '</div><p>' + p.desc + '</p></a>';
+    }).join('');
+  }
+
+  function renderSkills(lang) {
+    var grid = document.getElementById('skillsGrid');
+    if (!grid) return;
+    var data = I18N_SKILLS[lang] || I18N_SKILLS.en;
+    grid.innerHTML = data.map(function(s) {
+      return '<div class="skill-cat"><h3>' + s.cat + '</h3><div class="badges">' + s.badges.map(function(b) { return '<span class="badge">' + b + '</span>'; }).join('') + '</div></div>';
+    }).join('');
+  }
+
+  function applyTexts(lang) {
+    var t = I18N_DATA[lang] || I18N_DATA.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
+        el.textContent = t[key];
+      }
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) el.placeholder = t[key];
+    });
+  }
+
+  function switchLang(lang) {
+    if (lang === currentLang) return;
+    currentLang = lang;
+    localStorage.setItem('portfolio-lang', lang);
+    document.documentElement.lang = lang === 'fr' ? 'fr' : 'en';
+
+    // Update lang buttons
+    document.querySelectorAll('.lang-btn, .mobile-lang button').forEach(function(btn) {
+      var isActive = btn.getAttribute('data-lang') === lang;
+      btn.classList.toggle('active', isActive);
+      if (btn.getAttribute('role') === 'radio') btn.setAttribute('aria-checked', isActive);
+    });
+
+    applyTexts(lang);
+    renderEducation(lang);
+    renderWork(lang);
+    renderProjects(lang);
+    renderSkills(lang);
+
+    // Re-init reveal observers for newly rendered elements
+    document.querySelectorAll('.reveal').forEach(function(el) { el.classList.remove('visible'); });
+    document.querySelectorAll('.project-card').forEach(function(el) { el.classList.remove('visible'); });
+    initObservers();
+  }
+
+  function initObservers() {
+    // ── Scroll reveal ──
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
+
+    // ── Stack-down work cards ──
+    var stackObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.work-card').forEach(function(card, i) {
+            card.style.transition = 'none';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(' + (-35 - i * 15) + 'px)';
+            void card.offsetHeight;
+            card.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.34,1.56,.64,1)';
+            card.style.transitionDelay = i * 0.18 + 's';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          });
+          stackObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    var w = document.getElementById('work');
+    if (w) stackObs.observe(w);
+
+    // ── Staggered project cards ──
+    var stagObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.project-card').forEach(function(item) { item.classList.add('visible'); });
+          stagObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    var p = document.getElementById('projects');
+    if (p) stagObs.observe(p);
+  }
+
+  // ── Nav highlight on scroll ──
+  function initNavHighlight() {
+    var navLinks = document.querySelectorAll('.nav-links a');
+    var sections = document.querySelectorAll('section[id]');
+    var navObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.getAttribute('id');
+          navLinks.forEach(function(a) {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(function(s) { navObs.observe(s); });
+  }
+
+  // ── Hamburger toggle ──
+  var ham = document.getElementById('hamburger');
+  var mobileNav = document.getElementById('mobileNav');
+  if (ham && mobileNav) {
+    ham.addEventListener('click', function() {
+      var open = mobileNav.classList.toggle('open');
+      ham.classList.toggle('open');
+      ham.setAttribute('aria-expanded', open);
+    });
+    mobileNav.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        mobileNav.classList.remove('open');
+        ham.classList.remove('open');
+        ham.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  // ── Theme toggle ──
+  var toggle = document.getElementById('themeToggle');
+  function applyDark(isDark) {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.body.classList.toggle('dark', isDark);
+    if (toggle) {
+      toggle.innerHTML = isDark ? '\u2601' : '\u263C';
+      toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+  }
+  var saved = localStorage.getItem('portfolio-theme');
+  applyDark(saved === 'dark');
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      var isDark = !document.body.classList.contains('dark');
+      applyDark(isDark);
+      localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light');
+    });
+  }
+
+  // ── Hero stagger entrance ──
+  function staggerHero() {
+    document.querySelectorAll('.hero-entrance').forEach(function(el) { el.classList.add('in'); });
+  }
+
+  // ── Counter animation ──
+  function animateCounters() {
+    document.querySelectorAll('.stat-value[data-target]').forEach(function(el) {
+      var raw = el.getAttribute('data-target');
+      var target = parseInt(raw, 10);
+      var suffix = el.textContent.replace(/[\d,]/g, '').trim();
+      var duration = 1500;
+      var start = performance.now();
+      function tick(now) {
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.round(eased * target);
+        el.textContent = current.toLocaleString() + (suffix ? ' ' + suffix : '');
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.classList.add('counted');
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // ── Typewriter ──
+  function typeWriter(el, text, speed, callback) {
+    el.classList.add('typewriter');
+    el.textContent = '';
+    var i = 0;
+    function next() {
+      if (i < text.length) {
+        el.textContent += text[i];
+        i++;
+        setTimeout(next, speed);
+      } else {
+        el.classList.add('done');
+        el.classList.remove('typewriter');
+        if (callback) callback();
+      }
+    }
+    next();
+  }
+
+  var twObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var text = el.getAttribute('data-text') || el.textContent.trim();
+        el.textContent = '';
+        el.classList.add('typing');
+        var i = 0, speed = 28;
+        if (el.classList.contains('section-title')) speed = 35;
+        if (el.classList.contains('section-label')) speed = 22;
+        function next() {
+          if (i < text.length) {
+            el.textContent += text[i];
+            i++;
+            setTimeout(next, speed);
+          } else {
+            el.classList.add('done');
+            el.classList.remove('typewriter');
+          }
+        }
+        el.classList.add('typewriter');
+        next();
+        twObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.typewriter-scroll').forEach(function(el) { twObserver.observe(el); });
+
+  // ── Language toggle listeners ──
+  document.querySelectorAll('.lang-btn, .mobile-lang button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      switchLang(this.getAttribute('data-lang'));
+    });
+  });
+
+  // ── Initial render ──
+  renderEducation(currentLang);
+  renderWork(currentLang);
+  renderProjects(currentLang);
+  renderSkills(currentLang);
+  applyTexts(currentLang);
+  // Set initial lang toggle state
+  document.querySelectorAll('.lang-btn, .mobile-lang button').forEach(function(btn) {
+    var isActive = btn.getAttribute('data-lang') === currentLang;
+    btn.classList.toggle('active', isActive);
+    if (btn.getAttribute('role') === 'radio') btn.setAttribute('aria-checked', isActive);
+  });
+  document.documentElement.lang = currentLang === 'fr' ? 'fr' : 'en';
+
+  initObservers();
+  initNavHighlight();
+
+  // ── Smooth nav scroll ──
+  document.querySelectorAll('.nav-links a').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ── Init on load ──
+  window.addEventListener('load', function() {
+    staggerHero();
+    var tag = document.getElementById('heroTag');
+    var originalText = tag ? tag.textContent.trim() : '';
+    if (tag && originalText) {
+      setTimeout(function() {
+        typeWriter(tag, originalText, 28, function() { animateCounters(); });
+      }, 1200);
+    } else {
+      animateCounters();
+    }
+  });
+
+  // ── CV button toast ──
+  var cvBtn = document.getElementById('cvBtn');
+  var toast = document.getElementById('toast');
+  if (cvBtn && toast) {
+    cvBtn.addEventListener('click', function() {
+      var t = I18N_DATA[currentLang] || I18N_DATA.en;
+      toast.textContent = t['toast.cv'] || 'CV coming soon — ask me directly';
+      toast.classList.add('show');
+      clearTimeout(cvBtn._t);
+      cvBtn._t = setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    });
+  }
+
+  // ── Contact form ──
+  var form = document.getElementById('contactForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      var orig = btn.textContent;
+      btn.textContent = currentLang === 'fr' ? 'Envoyé !' : 'Sent!';
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '.6';
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.style.pointerEvents = '';
+        btn.style.opacity = '';
+      }, 3000);
+    });
+  }
+})();
+</script>
+
+<script>
+const noiseGLSL = `
+  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+  vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+  float permute(float x){ return floor(mod(((x*34.0)+1.0)*x, 289.0)); }
+  vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
+  float taylorInvSqrt(float r){ return 1.79284291400159 - 0.85373472095314 * r; }
+  float snoise(vec2 v){
+    const vec4 C = vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+    vec2 i=floor(v+dot(v,C.yy)); vec2 x0=v-i+dot(i,C.xx); vec2 i1;
+    i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
+    vec4 x12=x0.xyxy+C.xxzz; x12.xy-=i1; i=mod(i,289.);
+    vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
+    vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+    m=m*m; m=m*m; vec3 x=2.*fract(p*C.www)-1.;
+    vec3 h=abs(x)-.5; vec3 ox=floor(x+.5); vec3 a0=x-ox;
+    m*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+    vec3 g; g.x=a0.x*x0.x+h.x*x0.y; g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+    return 130.*dot(m,g);
+  }
+  float snoise(vec3 v){
+    const vec2 C=vec2(1./6.,1./3.); const vec4 D=vec4(0.,.5,1.,2.);
+    vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);
+    vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.-g;
+    vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);
+    vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+2.*C.xxx; vec3 x3=x0-1.+3.*C.xxx;
+    i=mod(i,289.);
+    vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+    float n_=1./7.; vec3 ns=n_*D.wyz-D.xzx;
+    vec4 j=p-49.*floor(p*ns.z*ns.z); vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.*x_);
+    vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.-abs(x)-abs(y);
+    vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);
+    vec4 s0=floor(b0)*2.+1.; vec4 s1=floor(b1)*2.+1.; vec4 sh=-step(h,vec4(0));
+    vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+    vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y); vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
+    vec4 nrm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+    p0*=nrm.x; p1*=nrm.y; p2*=nrm.z; p3*=nrm.w;
+    vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.); m=m*m;
+    return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+  }
+`;
+
+class System {
+  constructor(r,s,texType){
+    if(!texType) texType=THREE.FloatType;
+    this.tt=texType;this.r=r;this.s=s;this.n=50000;this.sz=256;this.m=new THREE.Vector2(9999,9999);this.hp=0;this.rw=.04;this.r2=.012;this.rd=.04;this.t=0;this.lt=0;this.ih=!1;this.g();this.sim();this.ren()
+  }
+  g(){
+    const n=this.n,sz=this.sz,d=new Float32Array(sz*sz*4);let idx=0;const gs=Math.ceil(Math.sqrt(n)),st=1.6/gs;
+    for(let i=0;i<gs&&idx<n;i++)for(let j=0;j<gs&&idx<n;j++){const x=-.8+(i+Math.random())*st,y=-.8+(j+Math.random())*st;d[idx*4]=x;d[idx*4+1]=y;d[idx*4+2]=0;d[idx*4+3]=0;idx++}
+    this.pt=new THREE.DataTexture(d,sz,sz,THREE.RGBAFormat,this.tt);this.pt.needsUpdate=!0;
+    const sd=new Float32Array(n*4);for(let i=0;i<n;i++){sd[i*4]=Math.random();sd[i*4+1]=Math.random();sd[i*4+2]=Math.random();sd[i*4+3]=Math.random()}
+    const g2=new THREE.BufferGeometry,uv=new Float32Array(n*2);for(let i=0;i<n;i++){uv[i*2]=(i%sz)/sz;uv[i*2+1]=Math.floor(i/sz)/sz}
+    g2.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));g2.setAttribute('uv',new THREE.BufferAttribute(uv,2));g2.setAttribute('seeds',new THREE.BufferAttribute(sd,4));this.geo=g2
+  }
+  mkRT(){
+    var flt=this.tt===THREE.HalfFloatType?THREE.NearestFilter:THREE.LinearFilter;
+    const o={wrapS:THREE.ClampToEdgeWrapping,wrapT:THREE.ClampToEdgeWrapping,minFilter:flt,magFilter:flt,format:THREE.RGBAFormat,type:this.tt,depthBuffer:!1,stencilBuffer:!1};
+    this.rA=new THREE.WebGLRenderTarget(this.sz,this.sz,o);this.rB=new THREE.WebGLRenderTarget(this.sz,this.sz,o)
+  }
+  sim(){
+    this.mkRT();const un={uPosition:{value:this.pt},uMousePos:{value:new THREE.Vector2},uTime:{value:0},uDeltaTime:{value:0},uRingRadius:{value:.2},uRingWidth:{value:this.rw},uRingWidth2:{value:this.r2},uRingDisplacement:{value:this.rd},uIsHovering:{value:0}};
+    const f=`precision highp float;uniform sampler2D uPosition;uniform vec2 uMousePos;uniform float uTime,uDeltaTime,uRingRadius,uRingWidth,uRingWidth2,uRingDisplacement,uIsHovering;${noiseGLSL}void main(){vec2 tc=gl_FragCoord.xy/vec2(${this.sz.toFixed(1)});vec4 pf=texture2D(uPosition,tc);float sc=pf.z,vl=pf.w,tm=uTime*.5;vec2 cp=pf.xy,pos=cp*.8;float d=distance(cp,uMousePos);float n0=snoise(vec3(cp*.2+vec2(18.49,72.97),tm*.5));float d1=distance(cp+(n0*.005),uMousePos);float t=smoothstep(uRingRadius-uRingWidth*2.,uRingRadius,d)-smoothstep(uRingRadius,uRingRadius+uRingWidth,d1);float t2=smoothstep(uRingRadius-uRingWidth2*2.,uRingRadius,d)-smoothstep(uRingRadius,uRingRadius+uRingWidth2,d1);float t3=smoothstep(uRingRadius+uRingWidth2,uRingRadius,d);t=pow(t,2.);t2=pow(t2,3.);t+=t2*3.+t3*.4+snoise(vec3(cp*30.+vec2(11.49,12.97),tm*.5))*t3*.5;float nS=snoise(vec3(cp*2.+vec2(18.49,72.97),tm*.5));t+=pow((nS+1.5)*.5,2.)*.6;float n1=snoise(vec3(cp*4.+vec2(88.49,32.44),tm*.35));float n2=snoise(vec3(cp*4.+vec2(50.9,120.95),tm*.35));float n3=snoise(vec3(cp*20.+vec2(18.49,72.97),tm*.5));float n4=snoise(vec3(cp*20.+vec2(50.9,120.95),tm*.5));vec2 dp=vec2(n1,n2)*.03+vec2(n3,n4)*.005;dp.x+=sin(cp.x*20.+tm*4.)*.02*clamp(d,0.,1.);dp.y+=cos(cp.y*20.+tm*3.)*.02*clamp(d,0.,1.);pos-=(uMousePos-(cp+dp))*pow(t2,.75)*uRingDisplacement;float sd=t-sc;sd*=.2;sc+=sd;vec2 fp=cp+dp+(pos*.25);vl=vl*.5+sc*.25;gl_FragColor=vec4(fp,sc,vl);}`;
+    this.sm=new THREE.ShaderMaterial({uniforms:un,vertexShader:'void main(){gl_Position=vec4(position,1.);}',fragmentShader:f});this.ss=new THREE.Scene;this.sc=new THREE.OrthographicCamera(-1,1,1,-1,0,1);this.ss.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),this.sm))
+  }
+  ren(){
+    const un={uPosition:{value:this.rA.texture},uTime:{value:0},uColor1:{value:new THREE.Color(.5,.8,1)},uColor2:{value:new THREE.Color(.2,.4,.9)},uColor3:{value:new THREE.Color(.8,.2,.6)},uAlpha:{value:1},uMousePos:{value:new THREE.Vector2},uRez:{value:new THREE.Vector2(1,1)},uParticleScale:{value:.5},uPixelRatio:{value:window.devicePixelRatio},uColorScheme:{value:0}};
+    const v=`precision highp float;attribute vec4 seeds;uniform sampler2D uPosition;uniform float uTime,uParticleScale,uPixelRatio;uniform int uColorScheme;varying vec4 vSeeds;varying float vVelocity;varying vec2 vLocalPos,vScreenPos;varying float vScale;${noiseGLSL}void main(){vec4 pos=texture2D(uPosition,uv);vSeeds=seeds;float nx=snoise(vec3(vec2(pos.xy*10.),uTime*.2+100.));float ny=snoise(vec3(vec2(pos.xy*10.),uTime*.2));float nx2=snoise(vec3(vec2(pos.xy*.5),uTime*.15+45.));float ny2=snoise(vec3(vec2(pos.xy*.5),uTime*.15+87.));float cd=length(pos.xy);float p=.5;float tp=smoothstep(p-.25,p,cd)-smoothstep(p,p+.25,cd);tp*=smoothstep(1.,0.,cd);pos.xy*=1.+(tp*.02);pos.y+=ny*.005;pos.x+=nx*.005;pos.y+=ny2*.02;pos.x+=nx2*.02;vVelocity=pos.w;vScale=pos.z;vLocalPos=pos.xy;vec4 vs=modelViewMatrix*vec4(vec3(pos.xy,0.),1.);gl_Position=projectionMatrix*vs;vScreenPos=gl_Position.xy;float ms=.25+float(uColorScheme)*.75;gl_PointSize=((vScale*7.)*(uPixelRatio*.5)*uParticleScale)+(ms*uPixelRatio);}`;
+    const f=`precision highp float;varying vec4 vSeeds;varying vec2 vScreenPos,vLocalPos;varying float vScale,vVelocity;uniform vec3 uColor1,uColor2,uColor3;uniform vec2 uMousePos,uRez;uniform float uAlpha,uTime;uniform int uColorScheme;${noiseGLSL}vec2 rot(vec2 v,float a){float s=sin(a),c=cos(a);return mat2(c,s,-s,c)*v;}void main(){float na=snoise(vec3(vLocalPos*10.+vec2(18.49,72.97),uTime*.85));float nc=snoise(vec3(vLocalPos*2.+vec2(74.66,91.56),uTime*.5));nc=(nc+1.)*.5;float ang=atan(vLocalPos.y-uMousePos.y,vLocalPos.x-uMousePos.x);vec2 uv=rot(gl_PointCoord.xy-.5,-ang+na*.5);float h=.8,pr=vVelocity;vec3 col=mix(mix(uColor1,uColor2,pr/h),mix(uColor2,uColor3,(pr-h)/(1.-h)),step(h,pr));float rd=smoothstep(.5,.45,length(uv));float a=uAlpha*rd*smoothstep(.1,.2,vScale);if(a<.01)discard;col=clamp(col,0.,1.);col=mix(col,col*clamp(vVelocity,0.,1.),float(uColorScheme));gl_FragColor=vec4(col,clamp(a,0.,1.));}`;
+    this.rm=new THREE.ShaderMaterial({uniforms:un,vertexShader:v,fragmentShader:f,transparent:!0,depthTest:!1,depthWrite:!1});
+    this.p=new THREE.Points(this.geo,this.rm);this.p.scale.set(5,5,5);this.s.add(this.p)
+  }
+  upd(){
+    const n=performance.now()/1000,dt=Math.min(n-this.lt,.05);this.lt=n;this.t+=dt;this.hp+=((this.ih?1:0)-this.hp)*.05;
+    const ps=this.r.domElement.width/window.devicePixelRatio/2000;
+    this.sm.uniforms.uPosition.value=this.rA.texture;this.sm.uniforms.uTime.value=this.t;this.sm.uniforms.uDeltaTime.value=dt;
+    this.sm.uniforms.uRingRadius.value=.175+Math.sin(this.t)*.03+Math.cos(this.t*3)*.02;
+    this.sm.uniforms.uMousePos.value.copy(this.m);this.sm.uniforms.uRingWidth.value=this.rw;this.sm.uniforms.uRingWidth2.value=this.r2;
+    this.sm.uniforms.uRingDisplacement.value=this.rd;this.sm.uniforms.uIsHovering.value=this.hp;
+    this.r.setRenderTarget(this.rB);this.r.render(this.ss,this.sc);this.r.setRenderTarget(null);
+    this.rm.uniforms.uPosition.value=this.rB.texture;this.rm.uniforms.uTime.value=this.t;this.rm.uniforms.uMousePos.value.copy(this.m);this.rm.uniforms.uParticleScale.value=ps;
+    [this.rA,this.rB]=[this.rB,this.rA]
+  }
+  resize(w,h){this.rm.uniforms.uRez.value.set(w,h);this.rm.uniforms.uPixelRatio.value=window.devicePixelRatio;this.rm.needsUpdate=!0}
+}
+
+// ── Three.js particle init with error handling + fallback ──
+var bgEl=document.getElementById('three-bg'),_3err=null;
+if(bgEl) try {
+  if(!window.THREE) throw new Error('THREE not loaded — CDN may be blocked');
+  var glCheck=document.createElement('canvas');
+  var glCtx=glCheck.getContext('webgl')||glCheck.getContext('experimental-webgl');
+  if(!glCtx) throw new Error('WebGL not supported by this browser');
+  console.log('[Three.js] Starting particle system…');
+  var s=new THREE.Scene,cm=new THREE.PerspectiveCamera(60,bgEl.clientWidth/bgEl.clientHeight,.1,1e3);cm.position.z=9;
+  var r=new THREE.WebGLRenderer({antialias:!0,alpha:!0});r.setPixelRatio(Math.min(window.devicePixelRatio,2));r.setClearColor(0,0);
+  r.setSize(bgEl.clientWidth,bgEl.clientHeight);bgEl.appendChild(r.domElement);
+  var texType=THREE.FloatType,sys;
+  try{
+    sys=new System(r,s,texType)
+  }catch(e2){
+    if(texType!==THREE.FloatType) throw e2;
+    texType=THREE.HalfFloatType;
+    console.log('[Three.js] FloatType failed, retrying with HalfFloatType:',e2.message);
+    try{ sys=new System(r,s,texType) }
+    catch(e3){ throw e2 }
+  }
+  var rc=new THREE.Raycaster,ip=new THREE.Vector3;
+  var mv=function(x,y){var cx=(x/innerWidth)*2-1,cy=-(y/innerHeight)*2+1;rc.setFromCamera(new THREE.Vector2(cx,cy),cm);rc.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1),0),ip);sys.m.set(ip.x*.175,ip.y*.175);sys.ih=!0};
+  window.addEventListener('mousemove',function(e){mv(e.clientX,e.clientY)});
+  window.addEventListener('mouseleave',function(){sys.ih=!1});
+  window.addEventListener('touchmove',function(e){var t=e.touches[0];mv(t.clientX,t.clientY)},{passive:!0});
+  window.addEventListener('touchend',function(){sys.ih=!1});
+  window.addEventListener('resize',function(){var w=bgEl.clientWidth,h=bgEl.clientHeight;r.setSize(w,h);cm.aspect=w/h;cm.updateProjectionMatrix();sys.resize(w,h)});
+  (function loop(){requestAnimationFrame(loop);sys.upd();r.render(s,cm)})();
+  console.log('[Three.js] Particle system running');
+} catch(e) {
+  _3err=e;
+  console.warn('[Three.js] Failed — falling back to Canvas 2D particles:', e.message);
+  if(_3err.stack) console.debug('[Three.js] Stack:', _3err.stack);
+  (function(){
+    var cvs=document.createElement('canvas');
+    cvs.style.cssText='display:block;width:100%;height:100%;opacity:.5';
+    bgEl.appendChild(cvs);
+    var ctx=cvs.getContext('2d');
+    var W,H,mx=-9999,my=-9999,ih=0,pts=[],N=400;
+    function resize(){W=cvs.width=bgEl.clientWidth;H=cvs.height=bgEl.clientHeight}
+    window.addEventListener('resize',resize);resize();
+    for(var i=0;i<N;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0});
+    bgEl.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;ih=1});
+    bgEl.addEventListener('mouseleave',function(){ih=0});
+    bgEl.addEventListener('touchmove',function(e){var t=e.touches[0];mx=t.clientX;my=t.clientY;ih=1},{passive:!0});
+    bgEl.addEventListener('touchend',function(){ih=0});
+    (function draw(){
+      requestAnimationFrame(draw);
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<N;i++){
+        var p=pts[i];
+        if(ih){var dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);if(d<200){var f=(1-d/200)*.08;p.vx+=dx/d*f*-1;p.vy+=dy/d*f*-1}}
+        p.vx+=(Math.random()-.5)*.08;p.vy+=(Math.random()-.5)*.08;
+        p.vx*=.94;p.vy*=.94;
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+        ctx.beginPath();ctx.arc(p.x,p.y,2+Math.sin(i+Date.now()*.001)*.5,0,Math.PI*2);
+        ctx.fillStyle='oklch(55% 0.13 165 / .5)';ctx.fill();
+      }
+    })();
+  })();
+}
+</script>
+
+</body>
+</html>
