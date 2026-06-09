@@ -1376,23 +1376,14 @@ var I18N_SKILLS = {
     }
   });
 
-  // ── CV button download both ──
+  // ── CV button download single merged file ──
   var cvBtn = document.getElementById('cvBtn');
   if (cvBtn) {
     cvBtn.addEventListener('click', function() {
-      var cvs = [
-        { file: 'mq6mcs24-Pramish-MAHARJAN-CV-EN.pdf', name: 'Pramish-Maharjan-CV-EN.pdf' },
-        { file: 'mq6mcs2h-Pramish-MAHARJAN-CV-FR.pdf', name: 'Pramish-Maharjan-CV-FR.pdf' }
-      ];
-      function dl(i) {
-        if (i >= cvs.length) return;
-        var a = document.createElement('a');
-        a.href = cvs[i].file;
-        a.download = cvs[i].name;
-        a.click();
-        setTimeout(dl, 400, i + 1);
-      }
-      dl(0);
+      var a = document.createElement('a');
+      a.href = 'Pramish-Maharjan-CV.pdf';
+      a.download = 'Pramish-Maharjan-CV.pdf';
+      a.click();
     });
   }
 
