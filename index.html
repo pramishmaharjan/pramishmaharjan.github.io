@@ -887,6 +887,14 @@ var I18N_EDUCATION = {
 var I18N_WORK = {
   en: [
     {
+      role: 'Data Analyst (Freelance)',
+      company: 'MM digital Press',
+      meta: '2026 &ndash; Present &middot; Kathmandu, Nepal',
+      items: [
+        'Designing and deploying an automated reporting suite using Power BI, Google Sheets, and Excel to streamline SLA tracking and operational cost analysis.'
+      ]
+    },
+    {
       role: 'Analytics Engineer (Finance Automation)',
       company: 'Valeo',
       meta: '2025 &middot; Cergy, France',
@@ -917,6 +925,14 @@ var I18N_WORK = {
     }
   ],
   fr: [
+    {
+      role: 'Analyste de donn\u00e9es (Freelance)',
+      company: 'MM digital Press',
+      meta: '2026 &ndash; Pr\u00e9sent &middot; Katmandou, N\u00e9pal',
+      items: [
+        'Conception et d\u00e9ploiement d\'une suite de reporting automatis\u00e9e utilisant Power BI, Google Sheets et Excel pour optimiser le suivi des SLA et l\'analyse des co\u00fbts op\u00e9rationnels.'
+      ]
+    },
     {
       role: 'Ing\u00e9nieur analytique (Automatisation financi\u00e8re)',
       company: 'Valeo',
@@ -1381,8 +1397,9 @@ var I18N_SKILLS = {
   if (cvBtn) {
     cvBtn.addEventListener('click', function() {
       var a = document.createElement('a');
-      a.href = 'Pramish-Maharjan-CV.pdf';
-      a.download = 'Pramish-Maharjan-CV.pdf';
+      var fileName = currentLang === 'fr' ? 'Pramish_CV_FR.pdf' : 'Pramish_CV_EN.pdf';
+      a.href = fileName;
+      a.download = fileName;
       a.click();
     });
   }
