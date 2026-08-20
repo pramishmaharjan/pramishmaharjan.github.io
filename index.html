@@ -1394,14 +1394,28 @@ var I18N_SKILLS = {
       e.preventDefault();
       var btn = document.getElementById('submitBtn');
       var orig = btn.textContent;
-      btn.textContent = currentLang === 'fr' ? 'Envoyé !' : 'Sent!';
-      btn.style.pointerEvents = 'none';
-      btn.style.opacity = '.6';
-      setTimeout(function() {
-        btn.textContent = orig;
-        btn.style.pointerEvents = '';
-        btn.style.opacity = '';
-      }, 3000);
+
+      var formData = new FormData();
+      formData.append('entry.239193023', document.getElementById('name').value);
+      formData.append('entry.200878172', document.getElementById('email').value);
+      formData.append('entry.731020792', document.getElementById('message').value);
+
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSfqjNJAIuHQ408O7sY_6DjLkjGbHZJVq05Ba0ds51nlmNt83Q/formResponse', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      }).then(function() {
+        btn.textContent = currentLang === 'fr' ? 'Envoyé !' : 'Sent!';
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '.6';
+        setTimeout(function() {
+          btn.textContent = orig;
+          btn.style.pointerEvents = '';
+          btn.style.opacity = '';
+        }, 3000);
+      }).catch(function() {
+        alert(currentLang === 'fr' ? 'Une erreur est survenue.' : 'An error occurred.');
+      });
     });
   }
 })();
